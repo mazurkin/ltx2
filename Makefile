@@ -118,4 +118,4 @@ rsync-pull:
 .PHONY: browse
 browse:
 	@conda run --no-capture-output --live-stream --name "$(CONDA_ENV_NAME)" \
-		python3 -m http.server --bind "0.0.0.0" "18080"
+		python3 -m http.server --bind "0.0.0.0" "18181"
