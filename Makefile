@@ -1,16 +1,21 @@
 SHELL := /bin/bash
 ROOT  := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-REMOTE_HOST  ?= pp-ltx2
-REMOTE_PATH  ?= projects/ltx2
+CONDA_ENV_NAME  = ltx2
 
-CONDA_ENV_NAME = ltx2
+LTX2_MODEL     ?= ltx-2-19b-dev.safetensors
+LTX2_DISTILLED ?= ltx-2-19b-distilled-lora-384.safetensors
+LTX2_UPSCALER  ?= ltx-2-spatial-upscaler-x2-1.0.safetensors
+LTX2_GEMMA     ?= google/gemma-3-12b-it
 
-.DEFAULT_GOAL = env-shell
+RSYNC_HOST     ?= pp-ltx2
+RSYNC_PATH     ?= projects/ltx2
 
 # -----------------------------------------------------------------------------
 # conda environment
 # -----------------------------------------------------------------------------
+
+.DEFAULT_GOAL = env-shell
 
 .PHONY: env-init-conda
 env-init-conda:
@@ -25,10 +30,6 @@ env-init-ltx2:
 	@conda run --no-capture-output --live-stream --name "$(CONDA_ENV_NAME)" --cwd "$(ROOT)/LTX-2" \
 		pip install -e packages/ltx-pipelines
 
-.PHONY: env-remove
-env-remove:
-	@conda env remove --yes --name "$(CONDA_ENV_NAME)"
-
 .PHONY: env-shell
 env-shell:
 	@conda run --no-capture-output --live-stream --name "$(CONDA_ENV_NAME)" --cwd "$(ROOT)/LTX-2" \
@@ -39,6 +40,10 @@ env-info:
 	@conda run --no-capture-output --live-stream --name "$(CONDA_ENV_NAME)" \
 		conda info
 
+.PHONY: env-remove
+env-remove:
+	@conda env remove --yes --name "$(CONDA_ENV_NAME)"
+
 # -----------------------------------------------------------------------------
 # run
 # -----------------------------------------------------------------------------
@@ -46,34 +51,33 @@ env-info:
 .PHONY: gemma
 gemma:
 	@conda run --no-capture-output --live-stream --name "$(CONDA_ENV_NAME)" \
-		hf download google/gemma-3-12b-it --local-dir "$(ROOT)/models/gemma"
+		hf download "$(LTX2_GEMMA)" --local-dir "$(ROOT)/models/gemma"
 
 .PHONY: models
 models:
 	@wget --timestamping --continue \
-		--output-document=$(ROOT)/models/ltx-2-spatial-upscaler-x2-1.0.safetensors \
-		'https://huggingface.co/Lightricks/LTX-2/resolve/main/ltx-2-spatial-upscaler-x2-1.0.safetensors?download=true'
+		--output-document=$(ROOT)/models/$(LTX2_UPSCALER) \
+		'https://huggingface.co/Lightricks/LTX-2/resolve/main/$(LTX2_UPSCALER)?download=true'
 	@wget --timestamping --continue \
-		--output-document=$(ROOT)/models/ltx-2-19b-distilled-lora-384.safetensors \
-		'https://huggingface.co/Lightricks/LTX-2/resolve/main/ltx-2-19b-distilled-lora-384.safetensors?download=true'
+		--output-document=$(ROOT)/models/$(LTX2_DISTILLED) \
+		'https://huggingface.co/Lightricks/LTX-2/resolve/main/$(LTX2_DISTILLED)?download=true'
 	@wget --timestamping --continue \
-		--output-document=$(ROOT)/models/ltx-2-19b-distilled.safetensors \
-		'https://huggingface.co/Lightricks/LTX-2/resolve/main/ltx-2-19b-distilled.safetensors?download=true'
+		--output-document=$(ROOT)/models/$(LTX2_MODEL) \
+		'https://huggingface.co/Lightricks/LTX-2/resolve/main/$(LTX2_MODEL)?download=true'
 
 .PHONY: render
 render:
 	@conda run --no-capture-output --live-stream --name "$(CONDA_ENV_NAME)" \
 		python -m ltx_pipelines.ti2vid_two_stages \
-			--checkpoint-path "${ROOT}/models/ltx-2-19b-distilled.safetensors" \
-			--distilled-lora "${ROOT}/models/ltx-2-19b-distilled-lora-384.safetensors" \
-			--spatial-upsampler-path "${ROOT}/models/ltx-2-spatial-upscaler-x2-1.0.safetensors" \
+			--checkpoint-path "${ROOT}/models/$(LTX2_MODEL)" \
+			--distilled-lora "${ROOT}/models/$(LTX2_DISTILLED)" \
+			--spatial-upsampler-path "${ROOT}/models/$(LTX2_UPSCALER)" \
 			--gemma-root "$(ROOT)/models/gemma" \
 			--prompt "${PROMPT}" \
-			--enhance-prompt \
-			--width 1024 \
-			--height 768 \
-			--frame-rate 25 \
-			--num-frames 250 \
+			--width 1920 \
+			--height 1024 \
+			--frame-rate 24 \
+			--num-frames 241 \
 			--output-path "output.mp4"
 
 # -----------------------------------------------------------------------------
@@ -91,7 +95,7 @@ rsync-push:
 		--exclude='*.log' \
 		--exclude='.ipynb_checkpoints' \
 		'$(ROOT)/' \
-		'$(REMOTE_HOST):$(REMOTE_PATH)'
+		'$(RSYNC_HOST):$(RSYNC_PATH)'
 
 .PHONY: rsync-pull
 rsync-pull:
@@ -103,7 +107,7 @@ rsync-pull:
 		--exclude='/models/*' \
 		--exclude='*.log' \
 		--exclude='.ipynb_checkpoints' \
-		'$(REMOTE_HOST):$(REMOTE_PATH)' \
+		'$(RSYNC_HOST):$(RSYNC_PATH)' \
 		'$(ROOT)/'
 
 # -----------------------------------------------------------------------------
