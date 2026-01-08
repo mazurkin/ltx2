@@ -27,26 +27,33 @@ Download the [latest Miniconda version](https://repo.anaconda.com/miniconda/Mini
 
 my GPU is NVIDIA A100 80GB (Ampere)
 
-refer to [Makefile](Makefile) for the details of the operations
+refer to the [Makefile](Makefile) for the details of the operations
 
 ```shell
 # make an isolated Conda environment with Python 3.12
 $ make env-init-conda
 
-# then install LTX-2 packages
+# then install all LTX-2 packages
 $ make env-init-ltx2
 
 # clone Gemma repository (you must get HF_TOKEN and you must agree to the Gemma's license on HF)
-# visit https://huggingface.co/google/gemma-3-12b-it
+# 1. register on HuggingFace: https://huggingface.co
+# 2. create access token: https://huggingface.co/settings/tokens
+# 3. visit https://huggingface.co/google/gemma-3-12b-it and sign the license agreement (the Gemma model is gated)
 $ HF_TOKEN=hf_xxxyyyzzz make gemma
 
-# download all the LTX-2 models from HF
+# download all required LTX-2 models from HF
 $ make models
 ```
 
 ## run
 
-```shell`
-# run the generator
-$ PROMPT="A beautiful sunset over the ocean with light breeze" CUDA_VISIBLE_DEVICES=0 make render
+```shell
+# in case you need to use the specific GPU
+$ export CUDA_VISIBLE_DEVICES=0
+
+# render video based on the prompt and the sample image
+$ bin/ltx2.sh \
+  'assets/aaron_paul.jpg' \
+  'cinematic video of the dark basement filled with the chemical laboratory equipment in spotlit, something is boiling in the big glass vials, the camera is going through the laboratory and then we see the actor Aaron Paul, the camera is coming closer to him, he is turning his face to the camera and yells «Data-science, bitch!» and then smiles wide'
 ```

@@ -3,11 +3,15 @@ ROOT  := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 CONDA_ENV_NAME  = ltx2
 
+# https://huggingface.co/Lightricks/LTX-2/tree/main
 LTX2_MODEL     ?= ltx-2-19b-dev.safetensors
 LTX2_DISTILLED ?= ltx-2-19b-distilled-lora-384.safetensors
 LTX2_UPSCALER  ?= ltx-2-spatial-upscaler-x2-1.0.safetensors
+
+# https://huggingface.co/google/gemma-3-12b-it
 LTX2_GEMMA     ?= google/gemma-3-12b-it
 
+# remote host and path for rsync
 RSYNC_HOST     ?= pp-ltx2
 RSYNC_PATH     ?= projects/ltx2
 
@@ -74,10 +78,11 @@ render:
 			--spatial-upsampler-path "${ROOT}/models/$(LTX2_UPSCALER)" \
 			--gemma-root "$(ROOT)/models/gemma" \
 			--prompt "${PROMPT}" \
+			--image "$(ROOT)/assets/aaron_paul.jpg" 0 0.6 \
 			--width 1920 \
 			--height 1024 \
 			--frame-rate 24 \
-			--num-frames 241 \
+			--num-frames 481 \
 			--output-path "output.mp4"
 
 # -----------------------------------------------------------------------------
