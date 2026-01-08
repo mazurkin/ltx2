@@ -60,16 +60,21 @@ models:
 		--output-document=$(ROOT)/models/ltx-2-19b-distilled.safetensors \
 		'https://huggingface.co/Lightricks/LTX-2/resolve/main/ltx-2-19b-distilled.safetensors?download=true'
 
-.PHONY: example
-example:
+.PHONY: render
+render:
 	@conda run --no-capture-output --live-stream --name "$(CONDA_ENV_NAME)" \
 		python -m ltx_pipelines.ti2vid_two_stages \
 			--checkpoint-path "${ROOT}/models/ltx-2-19b-distilled.safetensors" \
 			--distilled-lora "${ROOT}/models/ltx-2-19b-distilled-lora-384.safetensors" \
 			--spatial-upsampler-path "${ROOT}/models/ltx-2-spatial-upscaler-x2-1.0.safetensors" \
 			--gemma-root "$(ROOT)/models/gemma" \
-			--prompt "A beautiful sunset over the ocean" \
-			--output-path output.mp4
+			--prompt "${PROMPT}" \
+			--enhance-prompt \
+			--width 1024 \
+			--height 768 \
+			--frame-rate 25 \
+			--num-frames 250 \
+			--output-path "output.mp4"
 
 # -----------------------------------------------------------------------------
 # rsync

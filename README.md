@@ -12,9 +12,11 @@ allows to run LTX-2 from command line on Linux
 git clone --recurse-submodules -j8 git://github.com/mazurkin/ltx2.git
 ```
 
-# environment
+# installation
 
 my GPU is NVIDIA A100 80GB (Ampere)
+
+refer to [Makefile](Makefile) for the details
 
 ```shell
 # make an isolated Conda environment with Python
@@ -29,7 +31,11 @@ $ HF_TOKEN=hf_xxxyyyzzz make gemma
 
 # download the LTX-2 models from HF
 $ make models
+```
 
+# run
+
+```shell`
 # run the generator
-$ CUDA_VISIBLE_DEVICES=0 make example
+$ PROMPT="A beautiful sunset over the ocean with light breeze" CUDA_VISIBLE_DEVICES=0 make render
 ```
