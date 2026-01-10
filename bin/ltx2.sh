@@ -18,12 +18,15 @@ declare -r PACKAGE_DIR
 MODEL_DIR="${PACKAGE_DIR}/models"
 declare -r MODEL_DIR
 
-# run python
+# python settings
 export PYTHONDONTWRITEBYTECODE=1
 export PYTHONUNBUFFERED=1
 
+# torch settings
+export PYTORCH_ALLOC_CONF=expandable_segments:True
+
 # arguments
-IMAGE=${1:?"Specify the image file as the first parameter"}
+IMAGE=${1:?"Specify the start image file as the first parameter"}
 PROMPT=${2:?"Specify the prompt text as the second parameter"}
 
 exec conda run --no-capture-output --live-stream --name ltx2 --cwd "${PACKAGE_DIR}" \

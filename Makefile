@@ -8,7 +8,7 @@ LTX2_MODEL     ?= ltx-2-19b-dev.safetensors
 LTX2_DISTILLED ?= ltx-2-19b-distilled-lora-384.safetensors
 LTX2_UPSCALER  ?= ltx-2-spatial-upscaler-x2-1.0.safetensors
 
-# https://huggingface.co/google/gemma-3-12b-it
+# https://huggingface.co/google/gemma-3-12b-it (you have to accept the license)
 LTX2_GEMMA     ?= google/gemma-3-12b-it
 
 # remote host and path for rsync

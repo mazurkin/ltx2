@@ -9,6 +9,8 @@ allows to run LTX-2 from command line on Linux
 - https://blog.comfy.org/p/ltx-2-open-source-audio-video-ai
 
 - https://github.com/Lightricks/LTX-2/blob/main/packages/ltx-pipelines/README.md
+- https://github.com/Lightricks/LTX-2/blob/main/packages/ltx-trainer/README.md
+
 - https://github.com/Lightricks/ComfyUI-LTXVideo?tab=readme-ov-file#required-models
 
 ## checkout
@@ -47,6 +49,8 @@ $ make models
 ```
 
 ## run
+
+refer to the [bin/ltx2.sh](bin/ltx2.sh) for the details of the operations
 
 ```shell
 # in case you need to use the specific GPU
