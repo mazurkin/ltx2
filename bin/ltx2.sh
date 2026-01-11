@@ -25,20 +25,15 @@ export PYTHONUNBUFFERED=1
 # torch settings
 export PYTORCH_ALLOC_CONF=expandable_segments:True
 
-# arguments
-IMAGE=${1:?"Specify the start image file as the first parameter"}
-PROMPT=${2:?"Specify the prompt text as the second parameter"}
-
 exec conda run --no-capture-output --live-stream --name ltx2 --cwd "${PACKAGE_DIR}" \
     python -m ltx_pipelines.ti2vid_two_stages \
         --checkpoint-path "${MODEL_DIR}/ltx-2-19b-dev.safetensors" \
         --distilled-lora "${MODEL_DIR}/ltx-2-19b-distilled-lora-384.safetensors" \
         --spatial-upsampler-path "${MODEL_DIR}/ltx-2-spatial-upscaler-x2-1.0.safetensors" \
         --gemma-root "${MODEL_DIR}/gemma" \
-        --prompt "${PROMPT}" \
-        --image "${IMAGE}" 0 0.6 \
         --width 1920 \
         --height 1024 \
         --frame-rate 24 \
         --num-frames 481 \
-        --output-path "output.mp4"
+        --output-path "output.mp4" \
+        "$@"

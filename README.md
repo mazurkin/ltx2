@@ -5,12 +5,12 @@ allows to run LTX-2 from command line on Linux
 - https://huggingface.co/Lightricks/LTX-2
 
 - https://ltx.io/model/model-blog/prompting-guide-for-ltx-2
-
-- https://blog.comfy.org/p/ltx-2-open-source-audio-video-ai
+- https://ltx.studio/blog/negative-prompts
 
 - https://github.com/Lightricks/LTX-2/blob/main/packages/ltx-pipelines/README.md
 - https://github.com/Lightricks/LTX-2/blob/main/packages/ltx-trainer/README.md
 
+- https://blog.comfy.org/p/ltx-2-open-source-audio-video-ai
 - https://github.com/Lightricks/ComfyUI-LTXVideo?tab=readme-ov-file#required-models
 
 ## checkout
@@ -55,9 +55,21 @@ refer to the [bin/ltx2.sh](bin/ltx2.sh) for the details of the operations
 ```shell
 # in case you need to use the specific GPU
 $ export CUDA_VISIBLE_DEVICES=0
+```
 
+```shell
 # render video based on the prompt and the sample image
 $ bin/ltx2.sh \
-  'assets/aaron_paul.jpg' \
-  'cinematic video of the dark basement filled with the chemical laboratory equipment in spotlit, something is boiling in the big glass vials, the camera is going through the laboratory and then we see the actor Aaron Paul, the camera is coming closer to him, he is turning his face to the camera and yells «Data-science, bitch!» and then smiles wide'
+  --image 'assets/aaron_paul.jpg' 0 0.6 \
+  --seed 123 \
+  --negative-prompt 'blurry, low resolution, shaky, pixelated, compression artifacts, distorted motion, flickering, frame drops, poor lighting' \
+  --prompt 'cinematic video of the dark basement filled with the chemical laboratory equipment in spotlit, something is boiling in the big glass vials, the camera is going through the laboratory and then we see the actor Aaron Paul, the camera is coming closer to him, he is turning his face to the camera and yells «Data-science, bitch!» and then smiles wide'
+```
+
+```shell
+# render video based on the prompt only
+$ bin/ltx2.sh \
+  --seed 321 \
+  --negative-prompt 'blurry, low resolution, shaky, pixelated, compression artifacts, distorted motion, flickering, frame drops, poor lighting' \
+  --prompt 'A vibrant, high-energy cinematic shot of a diverse group of ecstatic young professionals in a modern, sun-drenched tech loft. They are jumping in slow motion, dancing with genuine joy, and shouting «Data Science! Data Science! Data Science!» with wide smiles. The camera performs a dynamic 360-degree orbit around the group. Warm lens flares, dust motes dancing in the light, and high-frame-rate detail. 4k, polished aesthetic, upbeat atmosphere.'
 ```
