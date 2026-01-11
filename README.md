@@ -42,10 +42,10 @@ $ make env-init-ltx2
 # 1. register on HuggingFace: https://huggingface.co
 # 2. create access token: https://huggingface.co/settings/tokens
 # 3. visit https://huggingface.co/google/gemma-3-12b-it and sign the license agreement (the Gemma model is gated)
-$ HF_TOKEN=hf_xxxyyyzzz make gemma
+$ HF_TOKEN=hf_xxxyyyzzz make download-gemma
 
 # download all required LTX-2 models from HF
-$ make models
+$ HF_TOKEN=hf_xxxyyyzzz make download-ltx2
 ```
 
 ## run

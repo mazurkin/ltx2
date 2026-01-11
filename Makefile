@@ -4,6 +4,7 @@ ROOT  := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 CONDA_ENV_NAME  = ltx2
 
 # https://huggingface.co/Lightricks/LTX-2/tree/main
+LRX2_REPO      ?= Lightricks/LTX-2
 LTX2_MODEL     ?= ltx-2-19b-dev.safetensors
 LTX2_DISTILLED ?= ltx-2-19b-distilled-lora-384.safetensors
 LTX2_UPSCALER  ?= ltx-2-spatial-upscaler-x2-1.0.safetensors
@@ -49,25 +50,26 @@ env-remove:
 	@conda env remove --yes --name "$(CONDA_ENV_NAME)"
 
 # -----------------------------------------------------------------------------
-# run
+# download
 # -----------------------------------------------------------------------------
 
-.PHONY: gemma
-gemma:
+.PHONY: download-gemma
+download-gemma:
 	@conda run --no-capture-output --live-stream --name "$(CONDA_ENV_NAME)" \
 		hf download "$(LTX2_GEMMA)" --local-dir "$(ROOT)/models/gemma"
 
-.PHONY: models
-models:
-	@wget --timestamping --continue \
-		--output-document=$(ROOT)/models/$(LTX2_UPSCALER) \
-		'https://huggingface.co/Lightricks/LTX-2/resolve/main/$(LTX2_UPSCALER)?download=true'
-	@wget --timestamping --continue \
-		--output-document=$(ROOT)/models/$(LTX2_DISTILLED) \
-		'https://huggingface.co/Lightricks/LTX-2/resolve/main/$(LTX2_DISTILLED)?download=true'
-	@wget --timestamping --continue \
-		--output-document=$(ROOT)/models/$(LTX2_MODEL) \
-		'https://huggingface.co/Lightricks/LTX-2/resolve/main/$(LTX2_MODEL)?download=true'
+.PHONY: download-ltx2
+download-ltx2:
+	@conda run --no-capture-output --live-stream --name "$(CONDA_ENV_NAME)" \
+		hf download "${LRX2_REPO}" "$(LTX2_UPSCALER)" --local-dir "$(ROOT)/models"
+	@conda run --no-capture-output --live-stream --name "$(CONDA_ENV_NAME)" \
+		hf download "${LRX2_REPO}" "$(LTX2_DISTILLED)" --local-dir "$(ROOT)/models"
+	@conda run --no-capture-output --live-stream --name "$(CONDA_ENV_NAME)" \
+		hf download "${LRX2_REPO}" "$(LTX2_MODEL)" --local-dir "$(ROOT)/models"
+
+# -----------------------------------------------------------------------------
+# run
+# -----------------------------------------------------------------------------
 
 .PHONY: render
 render:
