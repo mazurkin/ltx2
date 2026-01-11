@@ -68,11 +68,11 @@ download-ltx2:
 		hf download "${LRX2_REPO}" "$(LTX2_MODEL)" --local-dir "$(ROOT)/models"
 
 # -----------------------------------------------------------------------------
-# run
+# example
 # -----------------------------------------------------------------------------
 
-.PHONY: render
-render:
+.PHONY: example
+example:
 	@conda run --no-capture-output --live-stream --name "$(CONDA_ENV_NAME)" \
 		python -m ltx_pipelines.ti2vid_two_stages \
 			--checkpoint-path "${ROOT}/models/$(LTX2_MODEL)" \
